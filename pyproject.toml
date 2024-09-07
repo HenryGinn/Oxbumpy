@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools >= 61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+requires-python = ">= 3.8"
+name = "oxbumpy"
+version = "0.1"
+dependencies = [
+	"matplotlib",
+	"numpy",
+	"pandas"]
+authors = [
+	{name = "Henry Ginn", email = "henryginn137@gmail.com"}]
+description = "A toolkit for analysing, simulating, forecasting, and working with Oxford bumps racing data"
+readme = "README.md"
+keywords = ["Oxford", ""]
+classifiers=[
+	"Development Status :: 3 - Alpha",
+	"Intended Audience :: End Users/Desktop",
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Natural Language :: English",
+    "Operating System :: Unix",
+    "Operating System :: Microsoft :: Windows"]
