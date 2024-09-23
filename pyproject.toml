@@ -9,7 +9,8 @@ version = "0.1"
 dependencies = [
 	"matplotlib",
 	"numpy",
-	"pandas"]
+	"pandas",
+	"certifi"]
 authors = [
 	{name = "Henry Ginn", email = "henryginn137@gmail.com"}]
 description = "A toolkit for analysing, simulating, forecasting, and working with Oxford bumps racing data"
