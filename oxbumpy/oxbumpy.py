@@ -19,13 +19,14 @@ def read_json(file_name):
         data = json.load(file)
     return data
 
-def get_df(season_data):
+def get_df(season_data, name):
     rows = []
     for college, college_data in season_data.items():
         for sex, sex_data in college_data.items():
             for boat_number, boat_data in enumerate(sex_data):
                 add_boat_history(rows, college, sex, boat_number, boat_data)
     df = pd.DataFrame(rows)
+    df.name = name
     return df
 
 def add_boat_history(rows, college, sex, boat_number, boat_data):

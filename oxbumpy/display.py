@@ -10,6 +10,7 @@ class Display():
     small_radius = 0.15
     thin_width = 0.03
     thick_width = 0.07
+    thicker_width = 0.15
     cross_width_small = 0.05
     cross_length_small = 0.18
     cross_width_large = thick_width
@@ -23,17 +24,17 @@ class Display():
         self.row_count = self.df["Position"].max()
         self.initialise_figure()
         self.plot()
-        plt.savefig("Chart.pdf", format="pdf")
+        plt.savefig(f"{self.df.name}.pdf", format="pdf")
 
     def initialise_figure(self):
         self.patches = {"men": [], "women": []}
-        self.fig = plt.figure(figsize=(2.5, self.row_count*300/1679))
+        self.fig = plt.figure(figsize=(2.7, self.row_count * 0.1837233487734804))
         self.fig.patch.set_facecolor("#fafafa")
         self.set_axes()
 
     def set_axes(self):
-        ax_m = self.fig.add_axes([0.05, 0.01, 0.45, 0.98])
-        ax_f = self.fig.add_axes([0.55, 0.01, 0.45, 0.98])
+        ax_m = self.fig.add_axes([0.05, 0.01, 0.45, 0.965])
+        ax_f = self.fig.add_axes([0.52, 0.01, 0.45, 0.965])
         ax_m.set_facecolor("#fafafa")
         ax_f.set_facecolor("#fafafa")
         self.axes = {"men": ax_m, "women": ax_f}
@@ -43,22 +44,24 @@ class Display():
         self.plot_histories()
         self.plot_logos()
         self.plot_divisions()
+        self.plot_boat_numbers()
 
     def plot_peripherals(self):
+        self.set_titles()
         self.set_axis_limits()
-        #self.set_axis_titles()
         self.turn_off_axis_labels()
         self.turn_off_plot_spines()
 
     def set_axis_limits(self):
         for ax in self.axes.values():
             ax.set_aspect('equal')
-            ax.set_xlim((-0.6, 5.6))
+            ax.set_xlim((-1.3, 5.6))
             ax.set_ylim((-self.df["Position"].max()-0.5, 0))
         
-    def set_axis_titles(self):
+    def set_titles(self):
+        self.fig.suptitle(self.df.name, fontsize=10, y=0.99)
         for sex, ax in self.axes.items():
-            ax.set_title(sex.title(), y=0.99)
+            ax.set_title(sex.title(), y=0.99, fontsize=6)
 
     def turn_off_axis_labels(self):
         for ax in self.axes.values():
@@ -82,7 +85,7 @@ class Display():
             self.plot_logo(college, self.patches[sex], -group_df["Position"].values[-1], len(group_df["Position"].values)-0.75)
 
     def plot_logo(self, college, *args):
-        self.draw_loop(*args, "white", self.outer_loop_radius)
+        self.draw_loop(*args, "#fafafa", self.outer_loop_radius)
         match college:
             case "ORO": self.college_oro(*args)
             case "PMB": self.college_pmb(*args)
@@ -113,13 +116,14 @@ class Display():
             case "SPC": self.college_spc(*args)
             case "GTM": self.college_gtm(*args)
             case "SAC": self.college_sac(*args)
-            case "SMO": self.college_smo(*args)
+            case "SOM": self.college_som(*args)
             case "LIC": self.college_lic(*args)
             case "WRO": self.college_wro(*args)
             case "SAY": self.college_say(*args)
             case "SHI": self.college_shi(*args)
             case "SBH": self.college_sbh(*args)
             case "OSG": self.college_osg(*args)
+            case "REC": self.college_rec(*args)
             case _: self.college_blank(*args)
 
     def college_oro(self, *args):
@@ -239,7 +243,7 @@ class Display():
         self.draw_circle(*args, "#ed1212")
         self.draw_thick_line(*args, "#cccccc")
     
-    def college_smo(self, *args):
+    def college_som(self, *args):
         self.draw_circle(*args, "#ed1212")
         self.draw_thick_line(*args, "#000000")
     
@@ -261,13 +265,18 @@ class Display():
         self.draw_sector(*args, "#ffffff", 45, 225)
     
     def college_sbh(self, *args):
-        self.draw_circle(*args, "blue")
-        self.draw_thick_line(*args, "blue")
+        self.draw_circle(*args, "#ffffff")
+        self.draw_thick_line(*args, "#15468a")
     
     def college_osg(self, *args):
         self.draw_circle(*args, "#ffffff")
         self.draw_loop(*args, "#000000", self.radius)
         self.draw_small_circle(*args, "#ba0a0a")
+
+    def college_rec(self, *args):
+        self.draw_left_semicircle(*args, "#0d0e48")
+        self.draw_right_semicircle(*args, "#00992c")
+        self.draw_line(*args, "#ffffff", self.radius, self.thicker_width)
     
 
     def college_blank(self, *args):
@@ -306,10 +315,10 @@ class Display():
             "Color": "none", "Edge Color": color})
 
     def draw_thick_line(self, *args):
-        self.draw_line(*args, self.thick_width)
+        self.draw_line(*args, self.line_height, self.thick_width)
 
     def draw_thin_line(self, *args):
-        self.draw_line(*args, self.thin_width)
+        self.draw_line(*args, self.line_height, self.thin_width)
 
     def draw_thick_line_angle(self, patches, position, x, color, angle):
         patches.append({
@@ -318,10 +327,10 @@ class Display():
                                rotation_point="center", angle=angle),
             "Color": color, "Edge Color": "none"})
 
-    def draw_line(self, patches, position, x, color, width):
+    def draw_line(self, patches, position, x, color, height, width):
         patches.append({
-            "Patch": Rectangle((x - width, position - self.line_height),
-                               2*width, 2*self.line_height),
+            "Patch": Rectangle((x - width, position - height),
+                               2*width, 2*height),
             "Color": color, "Edge Color": "none"})
 
     def draw_small_cross(self, *args):
@@ -356,8 +365,8 @@ class Display():
             ax = self.axes[sex]
             div_sizes = [div["size"] for div in divs_sex]
             div_times = [div["time"] for div in divs_sex]
-            div_sizes_cumulative = [0] + cumsum(div_sizes)[:-1]
-            self.plot_division_lines(ax, div_sizes_cumulative)
+            div_sizes_cumulative = [0] + list(cumsum(div_sizes)[:-1])
+            self.plot_division_lines(ax, div_sizes_cumulative[1:])
             self.plot_division_times(ax, div_sizes_cumulative, div_times)
             
 
@@ -367,31 +376,43 @@ class Display():
             y = [-div_position - 0.5, -div_position - 0.5]
             ax.plot(x, y, color="k", linewidth=1)
 
-    def plot_division_times(self, ax, position, times):
-        for index, (position, time) in enumerate(zip(position, times)):
-            ax.text(5, -position, f"Division {index+1}: {time}", ha="left", va="top", rotation=-90)
+    def plot_division_times(self, ax, positions, times):
+        for index, (position, time) in enumerate(zip(positions, times)):
+            ax.text(4.8, -position-0.45, f"Division {roman(index+1)}: {time}",
+                    va="top", rotation=-90, fontsize=7)
+
+    def plot_boat_numbers(self):
+        for sex, ax in self.axes.items():
+            positions = self.df.loc[self.df["Sex"] == sex]["Position"].max()
+            for position in range(positions):
+                ax.text(-1.3, -position-1, f"{position+1}.",
+                        ha="left", va="center", fontsize=4.5)
 
 
+def roman(n):
+    if n in roman_lookup:
+        return roman_lookup[n]
+    else:
+        return str(n)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
+roman_lookup = {
+    1: "I",
+    2: "II",
+    3: "III",
+    4: "IV",
+    5: "V",
+    6: "VI",
+    7: "VII",
+    8: "VIII",
+    9: "IX",
+    10: "X",
+    11: "XI",
+    12: "XII",
+    13: "XIII",
+    14: "XIV",
+    15: "XV",
+    16: "XVI",
+    17: "XVII",
+    18: "XVIII",
+    19: "XIX",
+    20: "XX"}
