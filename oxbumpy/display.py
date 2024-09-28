@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 from matplotlib.collections import PatchCollection
 from matplotlib.patches import Wedge, Rectangle, Circle
+from numpy import cumsum
 
 
 class Display():
@@ -17,8 +18,8 @@ class Display():
     line_height = 0.32
     outer_loop_radius = 0.32
 
-    def __init__(self, df):
-        self.df = df
+    def __init__(self, df, divs):
+        self.df, self.divs = df, divs
         self.row_count = self.df["Position"].max()
         self.initialise_figure()
         self.plot()
@@ -41,7 +42,7 @@ class Display():
         self.plot_peripherals()
         self.plot_histories()
         self.plot_logos()
-        self.plot_division_lines()
+        self.plot_divisions()
 
     def plot_peripherals(self):
         self.set_axis_limits()
@@ -52,7 +53,7 @@ class Display():
     def set_axis_limits(self):
         for ax in self.axes.values():
             ax.set_aspect('equal')
-            ax.set_xlim((-0.6, 4.6))
+            ax.set_xlim((-0.6, 5.6))
             ax.set_ylim((-self.df["Position"].max()-0.5, 0))
         
     def set_axis_titles(self):
@@ -350,5 +351,47 @@ class Display():
             patch_collection.set_edgecolor(edge_colors)
             self.axes[sex].add_collection(patch_collection)
 
-    def plot_division_lines(self):
-        pass
+    def plot_divisions(self):
+        for sex, divs_sex in self.divs.items():
+            ax = self.axes[sex]
+            div_sizes = [div["size"] for div in divs_sex]
+            div_times = [div["time"] for div in divs_sex]
+            div_sizes_cumulative = [0] + cumsum(div_sizes)[:-1]
+            self.plot_division_lines(ax, div_sizes_cumulative)
+            self.plot_division_times(ax, div_sizes_cumulative, div_times)
+            
+
+    def plot_division_lines(self, ax, div_sizes_cumulative):
+        for div_position in div_sizes_cumulative:
+            x = [-2*self.radius, 4 + 2*self.radius]
+            y = [-div_position - 0.5, -div_position - 0.5]
+            ax.plot(x, y, color="k", linewidth=1)
+
+    def plot_division_times(self, ax, position, times):
+        for index, (position, time) in enumerate(zip(position, times)):
+            ax.text(5, -position, f"Division {index+1}: {time}", ha="left", va="top", rotation=-90)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        

@@ -1,7 +1,8 @@
-from oxbumpy import load_data, read_data, get_df, display
+from oxbumpy import load_data, read_json, get_df, display
 
 
 # data = load_data(2022, "torpids")
-data = read_data("torpids_2022.json")
+data = read_json("torpids_2022.json")
+divs = read_json("torpids_2022_divs.json")
 df = get_df(data)
-display_obj = display(df)
+display_obj = display(df, divs)

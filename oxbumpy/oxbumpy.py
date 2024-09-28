@@ -14,7 +14,7 @@ def load_data(year, event_type):
     data = response.json
     return data
 
-def read_data(file_name):
+def read_json(file_name):
     with open(file_name, "r") as file:
         data = json.load(file)
     return data
@@ -40,6 +40,6 @@ def add_row(rows, college, sex, boat_number, day, position, status):
                  "Day": day, "Position": position, "Status": status})
     
 
-def display(df):
-    display_obj = Display(df)
+def display(df, divs):
+    display_obj = Display(df, divs)
     return display_obj
